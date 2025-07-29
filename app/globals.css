@@ -39,10 +39,6 @@
   .animate-in {
     @apply opacity-0 animate-fade-in;
   }
-  
-  .animate-slide-up {
-    @apply translate-y-4 opacity-0 animate-slide-up;
-  }
 }
 
 @layer utilities {
