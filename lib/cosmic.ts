@@ -57,10 +57,8 @@ export async function createEmailSubscriber(data: {
       email: data.email,
       first_name: data.firstName || '',
       signup_date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
-      source: {
-        key: data.source,
-        value: data.source === 'social' ? 'Social Media' : data.source === 'referral' ? 'Referral' : 'Website'
-      }
+      source: data.source === 'social' ? 'Social Media' : 
+              data.source === 'referral' ? 'Referral' : 'Website'
     }
   })
   

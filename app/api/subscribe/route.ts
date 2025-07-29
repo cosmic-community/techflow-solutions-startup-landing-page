@@ -61,6 +61,11 @@ export async function POST(request: NextRequest) {
     // Create new subscriber with proper metadata structure matching Cosmic CMS
     const currentDate = new Date().toISOString().split('T')[0]
     
+    // Determine source value based on key
+    const sourceValue = source === 'social' ? 'Social Media' : 
+                       source === 'referral' ? 'Referral' : 'Website'
+    const sourceKey = source || 'website'
+
     const subscriberData = {
       title: cleanEmail,
       type: 'email-subscribers',
@@ -68,10 +73,7 @@ export async function POST(request: NextRequest) {
         email: cleanEmail,
         first_name: firstName?.trim() || '',
         signup_date: currentDate,
-        source: {
-          key: source || 'website',
-          value: source === 'social' ? 'Social Media' : source === 'referral' ? 'Referral' : 'Website'
-        }
+        source: sourceValue // Use the display value directly as per Cosmic CMS structure
       }
     }
 
@@ -94,7 +96,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (error?.status === 401) {
+    if (error?.status === 401 || error?.status === 403) {
       return NextResponse.json(
         { error: 'Authentication error. Please try again later.' },
         { status: 500 }

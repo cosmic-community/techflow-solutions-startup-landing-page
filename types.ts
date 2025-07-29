@@ -10,7 +10,7 @@ export interface StartupInfo {
       url: string
       imgix_url: string
     }
-    email_cta_text?: string
+    email_cta_text: string
   }
 }
 
@@ -41,32 +41,10 @@ export interface EmailSubscriber {
     email: string
     first_name: string
     signup_date: string
-    source: {
-      key: string
-      value: string
-    }
+    source: string
   }
 }
 
-export interface CosmicObject {
-  id: string
-  title: string
-  slug: string
-  created_at: string
-  modified_at: string
-  status: string
-  metadata: Record<string, any>
-}
-
-// Component Props Interfaces
-export interface HeroSectionProps {
-  startupInfo: StartupInfo
-}
-
-export interface UpdatesProps {
-  updates: Update[]
-}
-
 export interface EmailSignupProps {
-  ctaText: string
+  ctaText?: string
 }
