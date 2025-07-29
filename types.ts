@@ -10,7 +10,7 @@ export interface StartupInfo {
       url: string
       imgix_url: string
     }
-    email_cta_text: string
+    email_cta_text?: string
   }
 }
 
