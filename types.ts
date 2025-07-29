@@ -57,3 +57,16 @@ export interface CosmicObject {
   status: string
   metadata: Record<string, any>
 }
+
+// Component Props Interfaces
+export interface HeroSectionProps {
+  startupInfo: StartupInfo
+}
+
+export interface UpdatesProps {
+  updates: Update[]
+}
+
+export interface EmailSignupProps {
+  ctaText: string
+}
