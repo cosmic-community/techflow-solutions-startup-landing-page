@@ -5,10 +5,13 @@ import EmailSignupSection from '@/components/EmailSignupSection'
 
 export default async function HomePage() {
   // Fetch data on the server
-  const [startupInfo, updates] = await Promise.all([
+  const [startupInfoResult, updates] = await Promise.all([
     getStartupInfo(),
     getUpdates()
   ])
+
+  // Convert null to undefined to match component expectations
+  const startupInfo = startupInfoResult || undefined
 
   return (
     <main className="min-h-screen bg-white">
