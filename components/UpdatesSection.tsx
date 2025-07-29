@@ -1,4 +1,4 @@
-import type { UpdatesProps } from '@/types'
+import type { UpdatesProps, Update } from '@/types'
 import { Calendar, ArrowRight } from 'lucide-react'
 
 export default function UpdatesSection({ updates }: UpdatesProps) {
