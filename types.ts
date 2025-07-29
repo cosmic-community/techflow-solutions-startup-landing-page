@@ -48,3 +48,11 @@ export interface EmailSubscriber {
 export interface EmailSignupProps {
   ctaText?: string
 }
+
+export interface HeroSectionProps {
+  startupInfo: StartupInfo
+}
+
+export interface UpdatesProps {
+  updates: Update[]
+}
