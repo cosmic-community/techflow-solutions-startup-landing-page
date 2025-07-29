@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: 'Please enter a valid email address' },
@@ -28,12 +28,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const cleanEmail = email.toLowerCase().trim()
+
     // Check if email already exists
     try {
       const { objects } = await cosmic.objects
         .find({
           type: 'email-subscribers',
-          'metadata.email': email.toLowerCase().trim()
+          'metadata.email': cleanEmail
         })
         .props(['id'])
         .limit(1)
@@ -44,9 +46,9 @@ export async function POST(request: NextRequest) {
           { status: 409 }
         )
       }
-    } catch (checkError) {
+    } catch (checkError: any) {
       // If 404, continue with creation (no existing subscribers)
-      if (!(checkError as any)?.status || (checkError as any).status !== 404) {
+      if (!checkError?.status || checkError.status !== 404) {
         console.error('Error checking existing subscriber:', checkError)
         return NextResponse.json(
           { error: 'Unable to process subscription. Please try again.' },
@@ -55,11 +57,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create new subscriber
+    // Create new subscriber with proper metadata structure
     const currentDate = new Date().toISOString().split('T')[0]
-    const cleanEmail = email.toLowerCase().trim()
     
-    const { object } = await cosmic.objects.insertOne({
+    const subscriberData = {
       title: cleanEmail,
       type: 'email-subscribers',
       metadata: {
@@ -68,7 +69,9 @@ export async function POST(request: NextRequest) {
         signup_date: currentDate,
         source: source || 'website'
       }
-    })
+    }
+
+    const { object } = await cosmic.objects.insertOne(subscriberData)
 
     return NextResponse.json({
       success: true,
@@ -76,14 +79,21 @@ export async function POST(request: NextRequest) {
       subscriber: object
     }, { status: 201 })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Subscription error:', error)
     
     // Handle specific Cosmic errors
-    if ((error as any)?.message?.includes('validation')) {
+    if (error?.message?.includes('validation') || error?.message?.includes('email')) {
       return NextResponse.json(
         { error: 'Invalid email format. Please check and try again.' },
         { status: 400 }
+      )
+    }
+
+    if (error?.status === 401) {
+      return NextResponse.json(
+        { error: 'Authentication error. Please try again later.' },
+        { status: 500 }
       )
     }
 

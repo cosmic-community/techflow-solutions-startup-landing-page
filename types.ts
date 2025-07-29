@@ -1,3 +1,4 @@
+// Cosmic CMS Object Types
 export interface StartupInfo {
   id: string
   title: string
@@ -41,23 +42,38 @@ export interface EmailSubscriber {
     email: string
     first_name: string
     signup_date: string
-    source: {
+    source: string | {
       key: string
       value: string
     }
   }
 }
 
+// Component Props Interfaces
 export interface EmailSignupProps {
   ctaText?: string
   inline?: boolean
 }
 
-// Component props interfaces
 export interface HeroSectionProps {
   startupInfo?: StartupInfo
 }
 
 export interface UpdatesProps {
   updates: Update[]
+}
+
+// API Response Types
+export interface SubscriptionResponse {
+  success: boolean
+  message: string
+  subscriber?: EmailSubscriber
+  error?: string
+}
+
+// Form Data Types
+export interface EmailSubscriptionData {
+  email: string
+  firstName?: string
+  source: string
 }

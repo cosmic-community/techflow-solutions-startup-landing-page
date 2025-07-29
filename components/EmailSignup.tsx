@@ -13,11 +13,25 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
   const [message, setMessage] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
 
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    return emailRegex.test(email)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!email.trim()) {
+    const trimmedEmail = email.trim()
+    
+    if (!trimmedEmail) {
       setMessage('Please enter your email address')
+      setIsSuccess(false)
+      return
+    }
+
+    if (!validateEmail(trimmedEmail)) {
+      setMessage('Please enter a valid email address')
+      setIsSuccess(false)
       return
     }
 
@@ -32,7 +46,7 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: email.trim(),
+          email: trimmedEmail,
           firstName: firstName.trim(),
           source: 'website'
         }),
@@ -70,20 +84,20 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
               placeholder="Enter your email"
               required
               disabled={isLoading}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
           <button
             type="submit"
             disabled={isLoading || !email.trim()}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200 whitespace-nowrap"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 whitespace-nowrap"
           >
             {isLoading ? 'Signing up...' : 'Get Early Access'}
           </button>
         </form>
         
         {message && (
-          <div className={`mt-3 text-sm ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`mt-3 text-sm font-medium ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
             {message}
           </div>
         )}
@@ -102,7 +116,7 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="First name (optional)"
               disabled={isLoading}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
           <div>
@@ -113,7 +127,7 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
               placeholder="Email address"
               required
               disabled={isLoading}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </div>
@@ -121,14 +135,14 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
         <button
           type="submit"
           disabled={isLoading || !email.trim()}
-          className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200"
+          className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200"
         >
           {isLoading ? 'Signing up...' : 'Get Early Access'}
         </button>
       </form>
       
       {message && (
-        <div className={`mt-4 text-sm text-center ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+        <div className={`mt-4 text-sm text-center font-medium ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
           {message}
         </div>
       )}
