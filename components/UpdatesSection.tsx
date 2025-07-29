@@ -1,4 +1,4 @@
-import type { UpdatesProps } from '@/types'
+import type { UpdatesProps, Update } from '@/types'
 
 export default function UpdatesSection({ updates }: UpdatesProps) {
   if (!updates || updates.length === 0) {
@@ -41,7 +41,7 @@ export default function UpdatesSection({ updates }: UpdatesProps) {
           </div>
           
           <div className="space-y-8">
-            {updates.map((update, index) => (
+            {updates.map((update: Update, index: number) => (
               <article 
                 key={update.id}
                 className="bg-white rounded-2xl border border-gray-200 hover:border-gray-300 transition-colors duration-200 overflow-hidden animate-in"

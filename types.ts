@@ -3,6 +3,7 @@ export interface CosmicObject {
   id: string
   slug: string
   title: string
+  created_at: string
   metadata: Record<string, any>
 }
 
@@ -43,7 +44,16 @@ export interface EmailSubscriber extends CosmicObject {
   }
 }
 
-// Component props
+// Component props interfaces
+export interface HeroSectionProps {
+  startupInfo?: StartupInfo
+}
+
+export interface UpdatesProps {
+  updates: Update[]
+}
+
 export interface EmailSignupProps {
   ctaText?: string
+  inline?: boolean
 }
