@@ -36,7 +36,7 @@ export default function UpdatesSection({ updates }: UpdatesProps) {
         </div>
         
         <div className="grid md:grid-cols-2 gap-8">
-          {updates.map((update, index) => (
+          {updates.map((update: Update, index: number) => (
             <article 
               key={update.id}
               className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow duration-300 animate-slide-up"

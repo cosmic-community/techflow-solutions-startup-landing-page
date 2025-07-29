@@ -18,6 +18,7 @@ export interface Update {
   id: string
   slug: string
   title: string
+  created_at: string
   metadata: {
     title: string
     content?: string
@@ -55,6 +56,14 @@ export interface EmailSignupProps {
   ctaText?: string
 }
 
-export interface UpdatesSectionProps {
+// Fix: Add the missing UpdatesProps interface
+export interface UpdatesProps {
   updates: Update[]
+}
+
+// Fix: Add the missing CosmicResponse interface
+export interface CosmicResponse<T> {
+  object?: T
+  objects?: T[]
+  total?: number
 }

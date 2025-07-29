@@ -1,5 +1,5 @@
 import { createBucketClient } from '@cosmicjs/sdk'
-import type { StartupInfo, Update, EmailSubscriber, CosmicResponse } from '@/types'
+import type { StartupInfo, Update, EmailSubscriber } from '@/types'
 
 export const cosmic = createBucketClient({
   bucketSlug: process.env.COSMIC_BUCKET_SLUG as string,
@@ -33,7 +33,7 @@ export async function getUpdates(): Promise<Update[]> {
   try {
     const response = await cosmic.objects
       .find({ type: 'updates' })
-      .props(['id', 'title', 'slug', 'metadata'])
+      .props(['id', 'title', 'slug', 'metadata', 'created_at'])
       .depth(1)
       .limit(10)
     return response.objects as Update[]
