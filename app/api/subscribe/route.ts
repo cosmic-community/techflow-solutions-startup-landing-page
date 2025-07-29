@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create new subscriber with proper metadata structure
+    // Create new subscriber with proper metadata structure matching Cosmic CMS
     const currentDate = new Date().toISOString().split('T')[0]
     
     const subscriberData = {
@@ -67,7 +67,10 @@ export async function POST(request: NextRequest) {
         email: cleanEmail,
         first_name: firstName?.trim() || '',
         signup_date: currentDate,
-        source: source || 'website'
+        source: {
+          key: 'website',
+          value: 'Website'
+        }
       }
     }
 

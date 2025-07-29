@@ -64,7 +64,12 @@ export async function createEmailSubscriber(
         email: email.toLowerCase().trim(),
         first_name: firstName?.trim() || '',
         signup_date: new Date().toISOString().split('T')[0],
-        source: source
+        source: {
+          key: source,
+          value: source === 'website' ? 'Website' : 
+                 source === 'social' ? 'Social Media' : 
+                 source === 'referral' ? 'Referral' : 'Website'
+        }
       }
     })
     return object as EmailSubscriber

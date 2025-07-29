@@ -42,7 +42,7 @@ export interface EmailSubscriber {
     email: string
     first_name: string
     signup_date: string
-    source: string | {
+    source: {
       key: string
       value: string
     }
