@@ -50,4 +50,14 @@ export interface EmailSubscriber {
 
 export interface EmailSignupProps {
   ctaText?: string
+  inline?: boolean
+}
+
+// Component props interfaces
+export interface HeroSectionProps {
+  startupInfo?: StartupInfo
+}
+
+export interface UpdatesProps {
+  updates: Update[]
 }
