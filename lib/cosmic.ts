@@ -9,7 +9,7 @@ const cosmic = createBucketClient({
 })
 
 // Get startup info (singleton object)
-export async function getStartupInfo(): Promise<StartupInfo | undefined> {
+export async function getStartupInfo(): Promise<StartupInfo | null> {
   try {
     const { object } = await cosmic.objects
       .findOne({
@@ -20,9 +20,8 @@ export async function getStartupInfo(): Promise<StartupInfo | undefined> {
     
     return object as StartupInfo
   } catch (error) {
-    // Return undefined instead of null for type consistency
     console.error('Error fetching startup info:', error)
-    return undefined
+    return null
   }
 }
 
@@ -57,7 +56,10 @@ export async function createEmailSubscriber(data: {
       email: data.email,
       first_name: data.firstName || '',
       signup_date: new Date().toISOString().split('T')[0], // YYYY-MM-DD format
-      source: data.source
+      source: {
+        key: data.source,
+        value: data.source === 'social' ? 'Social Media' : data.source === 'referral' ? 'Referral' : 'Website'
+      }
     }
   })
   

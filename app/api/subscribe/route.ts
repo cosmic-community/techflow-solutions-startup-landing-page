@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Basic email validation
+    // Basic email validation matching Cosmic CMS regex
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -67,7 +67,10 @@ export async function POST(request: NextRequest) {
         email: cleanEmail,
         first_name: firstName?.trim() || '',
         signup_date: currentDate,
-        source: source || 'website'
+        source: {
+          key: source || 'website',
+          value: source === 'social' ? 'Social Media' : source === 'referral' ? 'Referral' : 'Website'
+        }
       }
     }
 

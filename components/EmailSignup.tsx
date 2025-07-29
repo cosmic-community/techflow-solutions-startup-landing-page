@@ -4,9 +4,10 @@ import { useState } from 'react'
 
 interface EmailSignupProps {
   inline?: boolean
+  ctaText?: string
 }
 
-export default function EmailSignup({ inline = false }: EmailSignupProps) {
+export default function EmailSignup({ inline = false, ctaText }: EmailSignupProps) {
   const [email, setEmail] = useState('')
   const [firstName, setFirstName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -92,7 +93,7 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
             disabled={isLoading || !email.trim()}
             className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 whitespace-nowrap"
           >
-            {isLoading ? 'Signing up...' : 'Get Early Access'}
+            {isLoading ? 'Signing up...' : (ctaText || 'Get Early Access')}
           </button>
         </form>
         
@@ -137,7 +138,7 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
           disabled={isLoading || !email.trim()}
           className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200"
         >
-          {isLoading ? 'Signing up..' : 'Get Early Access'}
+          {isLoading ? 'Signing up...' : (ctaText || 'Get Early Access')}
         </button>
       </form>
       
