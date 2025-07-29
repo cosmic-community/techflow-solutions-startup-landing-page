@@ -11,52 +11,84 @@ export async function POST(request: NextRequest) {
   try {
     const { email, firstName, source } = await request.json()
 
-    if (!email) {
+    // Validate email
+    if (!email || typeof email !== 'string') {
       return NextResponse.json(
-        { error: 'Email is required' },
+        { error: 'Valid email is required' },
+        { status: 400 }
+      )
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Please enter a valid email address' },
         { status: 400 }
       )
     }
 
     // Check if email already exists
     try {
-      const existingSubscriber = await cosmic.objects.find({
-        type: 'email-subscribers',
-        'metadata.email': email
-      }).props(['id'])
+      const { objects } = await cosmic.objects
+        .find({
+          type: 'email-subscribers',
+          'metadata.email': email.toLowerCase().trim()
+        })
+        .props(['id'])
+        .limit(1)
 
-      if (existingSubscriber.objects && existingSubscriber.objects.length > 0) {
+      if (objects && objects.length > 0) {
         return NextResponse.json(
-          { error: 'Email already subscribed' },
+          { error: 'This email is already subscribed' },
           { status: 409 }
         )
       }
-    } catch (error) {
-      // If no existing subscriber found, continue with creation
+    } catch (checkError) {
+      // If 404, continue with creation (no existing subscribers)
+      if (!(checkError as any)?.status || (checkError as any).status !== 404) {
+        console.error('Error checking existing subscriber:', checkError)
+        return NextResponse.json(
+          { error: 'Unable to process subscription. Please try again.' },
+          { status: 500 }
+        )
+      }
     }
 
     // Create new subscriber
-    const newSubscriber = await cosmic.objects.insertOne({
-      title: email,
+    const currentDate = new Date().toISOString().split('T')[0]
+    const cleanEmail = email.toLowerCase().trim()
+    
+    const { object } = await cosmic.objects.insertOne({
+      title: cleanEmail,
       type: 'email-subscribers',
       metadata: {
-        email,
-        first_name: firstName || '',
-        signup_date: new Date().toISOString().split('T')[0],
+        email: cleanEmail,
+        first_name: firstName?.trim() || '',
+        signup_date: currentDate,
         source: source || 'website'
       }
     })
 
     return NextResponse.json({
       success: true,
-      message: 'Successfully subscribed!',
-      subscriber: newSubscriber.object
-    })
+      message: 'Successfully subscribed! We\'ll be in touch soon.',
+      subscriber: object
+    }, { status: 201 })
 
   } catch (error) {
     console.error('Subscription error:', error)
+    
+    // Handle specific Cosmic errors
+    if ((error as any)?.message?.includes('validation')) {
+      return NextResponse.json(
+        { error: 'Invalid email format. Please check and try again.' },
+        { status: 400 }
+      )
+    }
+
     return NextResponse.json(
-      { error: 'Failed to subscribe. Please try again.' },
+      { error: 'Unable to process subscription. Please try again later.' },
       { status: 500 }
     )
   }

@@ -15,8 +15,15 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!email.trim()) {
+      setMessage('Please enter your email address')
+      return
+    }
+
     setIsLoading(true)
     setMessage('')
+    setIsSuccess(false)
 
     try {
       const response = await fetch('/api/subscribe', {
@@ -25,24 +32,27 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
-          firstName,
+          email: email.trim(),
+          firstName: firstName.trim(),
           source: 'website'
         }),
       })
 
       const data = await response.json()
 
-      if (response.ok) {
+      if (response.ok && data.success) {
         setIsSuccess(true)
-        setMessage('Thanks for signing up! We\'ll be in touch soon.')
+        setMessage(data.message || 'Thanks for signing up! We\'ll be in touch soon.')
         setEmail('')
         setFirstName('')
       } else {
+        setIsSuccess(false)
         setMessage(data.error || 'Something went wrong. Please try again.')
       }
     } catch (error) {
-      setMessage('Something went wrong. Please try again.')
+      setIsSuccess(false)
+      setMessage('Network error. Please check your connection and try again.')
+      console.error('Subscription error:', error)
     } finally {
       setIsLoading(false)
     }
@@ -50,71 +60,78 @@ export default function EmailSignup({ inline = false }: EmailSignupProps) {
 
   if (inline) {
     return (
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md">
-        <div className="flex-1">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            required
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200 whitespace-nowrap"
-        >
-          {isLoading ? 'Signing up...' : 'Get Early Access'}
-        </button>
+      <div className="w-full max-w-md">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+              disabled={isLoading}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading || !email.trim()}
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200 whitespace-nowrap"
+          >
+            {isLoading ? 'Signing up...' : 'Get Early Access'}
+          </button>
+        </form>
         
         {message && (
-          <div className={`mt-2 text-sm ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`mt-3 text-sm ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
             {message}
           </div>
         )}
-      </form>
+      </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="First name (optional)"
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-          />
+    <div className="w-full">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First name (optional)"
+              disabled={isLoading}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50"
+            />
+          </div>
+          <div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email address"
+              required
+              disabled={isLoading}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 disabled:opacity-50"
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email address"
-            required
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-          />
-        </div>
-      </div>
-      
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200"
-      >
-        {isLoading ? 'Signing up...' : 'Get Early Access'}
-      </button>
+        
+        <button
+          type="submit"
+          disabled={isLoading || !email.trim()}
+          className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg transition-colors duration-200"
+        >
+          {isLoading ? 'Signing up...' : 'Get Early Access'}
+        </button>
+      </form>
       
       {message && (
-        <div className={`text-sm text-center ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+        <div className={`mt-4 text-sm text-center ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
           {message}
         </div>
       )}
-    </form>
+    </div>
   )
 }
