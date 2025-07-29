@@ -49,7 +49,6 @@ export interface EmailSignupProps {
   ctaText?: string
 }
 
-// Missing interfaces that components are trying to import
 export interface HeroSectionProps {
   startupInfo: StartupInfo
 }
