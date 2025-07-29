@@ -1,8 +1,12 @@
-// Cosmic CMS Object Types
-export interface StartupInfo {
+// Cosmic CMS types
+export interface CosmicObject {
   id: string
-  title: string
   slug: string
+  title: string
+  metadata: Record<string, any>
+}
+
+export interface StartupInfo extends CosmicObject {
   metadata: {
     company_name: string
     tagline: string
@@ -15,11 +19,7 @@ export interface StartupInfo {
   }
 }
 
-export interface Update {
-  id: string
-  title: string
-  slug: string
-  created_at: string
+export interface Update extends CosmicObject {
   metadata: {
     title: string
     content: string
@@ -34,46 +34,16 @@ export interface Update {
   }
 }
 
-export interface EmailSubscriber {
-  id: string
-  title: string
-  slug: string
+export interface EmailSubscriber extends CosmicObject {
   metadata: {
     email: string
     first_name: string
     signup_date: string
-    source: {
-      key: string
-      value: string
-    }
+    source: string
   }
 }
 
-// Component Props Interfaces
+// Component props
 export interface EmailSignupProps {
   ctaText?: string
-  inline?: boolean
-}
-
-export interface HeroSectionProps {
-  startupInfo?: StartupInfo
-}
-
-export interface UpdatesProps {
-  updates: Update[]
-}
-
-// API Response Types
-export interface SubscriptionResponse {
-  success: boolean
-  message: string
-  subscriber?: EmailSubscriber
-  error?: string
-}
-
-// Form Data Types
-export interface EmailSubscriptionData {
-  email: string
-  firstName?: string
-  source: string
 }

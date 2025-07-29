@@ -67,10 +67,7 @@ export async function POST(request: NextRequest) {
         email: cleanEmail,
         first_name: firstName?.trim() || '',
         signup_date: currentDate,
-        source: {
-          key: 'website',
-          value: 'Website'
-        }
+        source: source || 'website'
       }
     }
 
